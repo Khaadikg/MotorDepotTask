@@ -19,7 +19,8 @@ import static com.peaksoft.Status.*;
 public class Main {
     public static GsonBuilder GSON_BUILDER = new GsonBuilder();
     public static Gson GSON = GSON_BUILDER.create();
-    public static String URL = "./gson.truck";
+    public static String TruckURL = "./gson.truck";
+    public static String DriverURL = "./gson.driver";
     public static void main(String[] args) {
 
 // --- Коменченый Код ниже используется только для создания "gson" файла
@@ -32,21 +33,41 @@ public class Main {
         System.out.println(gson);
         write(gson);
 */
-        //Приоброзование Json файла в ArrayList обьектов джава
-        ArrayList<Truck> trucks = GSON.fromJson(read(), new TypeToken<ArrayList<Truck>>(){}.getType());
-
-        System.out.println("#  | Bus    |  Driver  |  State\n\n"
-                         + "———+————————+——————————+—————————");
-        for (Truck truck : trucks) {
-            System.out.printf("%d   |%s   |%s   |%s \n", truck.getId(), truck.getName(), truck.getDriver(), truck.getState());
+        ArrayList<Driver>  drivers = getArrayListOfDrivers(DriverURL);
+        System.out.println("#  | Driver    |  Bus  \n\n"
+                         + "———+———————————+——————————");
+        for (Driver driver:  drivers) {
+            System.out.printf("%d   |%s   |\n", driver.getId(), driver.getName());
         }
+
+//        System.out.println("#  | Bus    |  Driver  |  State\n\n"
+//                         + "———+————————+——————————+—————————");
+//        for (Truck truck : trucks) {
+//            System.out.printf("%d   |%s   |%s   |%s \n", truck.getId(), truck.getName(), truck.getDriver(), truck.getState());
+//        }
+
+        //--- код ниже спользуется только для создания gson файла Водителей
+//        for (Truck truck: trucks) {
+//            DriverDao.addToDriversDB(new Driver(truck.getId(), truck.getDriver()));
+//        }
+//        String gson = GSON.toJson(DriverDao.drivers);
+//        write(DriverURL, gson);
+
     }
 
 
 
-    public static String read() {
+    public static ArrayList getArrayListOfTrucks(String url) {
+        //Приоброзование Json файла в ArrayList обьектов джава
+        return GSON.fromJson(read(url), new TypeToken<ArrayList<Truck>>(){}.getType());
+    }
+    public static ArrayList getArrayListOfDrivers(String url) {
+        //Приоброзование Json файла в ArrayList обьектов джава
+        return GSON.fromJson(read(url), new TypeToken<ArrayList<Driver>>(){}.getType());
+    }
+    public static String read(String url) {
         try {
-            FileReader reader = new FileReader(URL);
+            FileReader reader = new FileReader(url);
             Scanner scan = new Scanner(reader);
 
             while (scan.hasNext()) {
@@ -58,10 +79,10 @@ public class Main {
         return null;
     }
     // Использовать только при пресоздании gson файла!
-    public static void write(String truck) {
-        Path path = Paths.get(URL);
+    public static void write(String url, String object) {
+        Path path = Paths.get(url);
         try {
-            Files.writeString(path, truck, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            Files.writeString(path, object, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         } catch (IOException e) {
             e.printStackTrace();
         }
