@@ -18,6 +18,6 @@ import static com.peaksoft.Status.*;
 
 public class Main {
     public static void main(String[] args) {
-
+        TruckService.start();
     }
 }
